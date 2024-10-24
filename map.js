@@ -2,13 +2,12 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
 
     var geojson = {
         type: "FeatureCollection",
-        features: data.map(function (d, index) {  // Use index as a fallback ID
-            // Replace "NA" or undefined values in organization_type with a default value
+        features: data.map(function (d, index) {
             var organizationType = (d["Organization Type"] || "Unknown").trim();
-            
+
             return {
                 type: "Feature",
-                id: d.org_id || index,  // Add unique ID
+                id: d.org_id || index,
                 geometry: {
                     type: "Point",
                     coordinates: [parseFloat(d.geo_lon), parseFloat(d.geo_lat)]
@@ -21,7 +20,6 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
                 }
             };
         }).filter(function (d) {
-            // Filter out any records that still have undefined coordinates or organization_type
             return d.geometry.coordinates.every(coord => !isNaN(coord)) && d.properties.organization_type !== "NA";
         })
     };
@@ -31,19 +29,17 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
         "Higher education institution": "#E8D0A9",
         "Registered apprenticeship": "#01B3CA",
         "WIOA-eligible": "#76A08A",
-        "Multiple types": "#E06D10",  
-        "Unknown": "#C34121", 
+        "Multiple types": "#E06D10",
+        "Unknown": "#C34121",
         "default": "#3FB1CE"
     };
 
-    // Add the workforce data as a source and layer once the map is loaded
     map.on('load', function () {
         map.addSource('workforceTrainingData', {
             'type': 'geojson',
             'data': geojson
         });
 
-        // Add a layer for data points
         map.addLayer({
             'id': 'workforce-points',
             'type': 'circle',
@@ -62,25 +58,22 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
                 ],
                 'circle-radius': [
                     'case',
-                    ['boolean', ['feature-state', 'hover'], false], 6,  
-                    4  // Default circle radius
+                    ['boolean', ['feature-state', 'hover'], false], 6,
+                    4
                 ]
             }
         });
 
-        // Create the tooltip function
         var popup = new mapboxgl.Popup({
             closeButton: false,
             closeOnClick: false
         });
 
-        // When mouse hovers, show the tooltip and increase circle radius for the specific point
         var hoveredStateId = null;
 
         map.on('mouseenter', 'workforce-points', function (e) {
-            map.getCanvas().style.cursor = 'pointer';  // Change cursor to pointer
+            map.getCanvas().style.cursor = 'pointer';
 
-            // Get the first feature under the pointer
             var features = map.queryRenderedFeatures(e.point, {
                 layers: ['workforce-points']
             });
@@ -91,7 +84,6 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
 
             var feature = features[0];
 
-            // Set the hover state for this feature
             if (hoveredStateId !== null) {
                 map.setFeatureState({ source: 'workforceTrainingData', id: hoveredStateId }, { hover: false });
             }
@@ -103,10 +95,15 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
             var orgAddress = feature.properties.org_address;
             var orgType = feature.properties.organization_type;
 
-            // Tooltip contents
-            var popupContent = '<h4>' + orgName + '</h4>' +
-                '<p>Address: ' + orgAddress + '</p>' +
-                '<p>Organization Type: ' + orgType + '</p>';
+            // Retrieve the color for the organization type
+            var orgTypeColor = organizationTypeColors[orgType] || organizationTypeColors["default"];
+
+            // Tooltip contents with a dot before the organization type
+            var popupContent = `<div style="font-family: 'Source Code Pro', monospace;">
+                <h4>${orgName}</h4>
+                <p>Address:<br>${orgAddress}</p>
+                <p>Organization Type:<br><span style="display:inline-block; width:10px; height:10px; background-color:${orgTypeColor}; border-radius:50%; margin-right:5px;"></span>${orgType}</p>
+            </div>`;
 
             // Add the tooltip to the map
             popup
@@ -115,25 +112,21 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
                 .addTo(map);
         });
 
-        // When mouse leaves the point, reset the hover state and remove the tooltip
         map.on('mouseleave', 'workforce-points', function () {
-            map.getCanvas().style.cursor = '';  // Reset the cursor to default
-            popup.remove();  // Remove the popup
+            map.getCanvas().style.cursor = '';
+            popup.remove();
 
-            // Remove the hover state for the previously hovered feature
             if (hoveredStateId !== null) {
                 map.setFeatureState({ source: 'workforceTrainingData', id: hoveredStateId }, { hover: false });
             }
             hoveredStateId = null;
         });
 
-        // Add event listeners to checkboxes for filtering points
         var checkboxes = document.querySelectorAll('#organization-types input[type=checkbox]');
         checkboxes.forEach(function (checkbox) {
             checkbox.addEventListener('change', filterPoints);
         });
 
-        // Function to filter points based on checkbox selection
         function filterPoints() {
             var selectedTypes = Array.from(checkboxes)
                 .filter(function (checkbox) {
@@ -143,19 +136,15 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
                     return checkbox.value;
                 });
 
-            console.log("Selected organization types for filtering:", selectedTypes);  // Log selected types
-
-            // If no types are selected, show all points
             if (selectedTypes.length === 0) {
-                map.setFilter('workforce-points', null);  // Show all points when no filters are selected
+                map.setFilter('workforce-points', null);
             } else {
-                // Apply filter to the map based on selected organization types
                 map.setFilter('workforce-points', ['in', ['get', 'organization_type'], ['literal', selectedTypes]]);
             }
         }
-
     });
 });
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
@@ -234,15 +223,15 @@ function displayStateInfo(stateName, dataset) {
     }
 
     const stateInfoHtml = `
-        <h3>State: ${stateData.State}</h3>
-        <p>Unemployment rate: ${stateData['Unemployment rate']}</p>
-        <p>Poverty rate: ${stateData['Poverty rate']}</p>
-        <p>Population identified as POC: ${stateData['Population identified as POC']}</p>
-        <p>Total population: ${stateData['Total population']}</p>
-        <p>Population with less than Bachelor's degree: ${stateData['Population with less than Bachelor\'s degree']}</p>
-        <p>Per Capita Personal Income: ${stateData['Per Capita Personal Income']}</p>
+        <h3 style="font-family: 'Source Code Pro', monospace;">| ${stateData.State}</h3>
+        <p>Unemployment rate <span class="state-value">${stateData['Unemployment rate']}</span></p>
+        <p>Poverty rate <span class="state-value">${stateData['Poverty rate']}</span></p>
+        <p>Population identified as POC <span class="state-value">${stateData['Population identified as POC']}</span></p>
+        <p>Total population <span class="state-value">${stateData['Total population']}</span></p>
+        <p>Population with less than Bachelor's degree <span class="state-value">${stateData['Population with less than Bachelor\'s degree']}</span></p>
+        <p>Per Capita Personal Income <span class="state-value">${stateData['Per Capita Personal Income']}</span></p>
     `;
 
-    // Update the sidebar with the state information
     document.getElementById('state-info').innerHTML = stateInfoHtml;
 }
+
