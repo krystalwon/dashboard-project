@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUSA 6110 | Dashboard Project</title>
+
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.15.0/mapbox-gl.css" rel="stylesheet">
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@6/turf.min.js"></script>
+
+
+    <link rel="stylesheet" href="styles.css">
+    <link href='https://fonts.googleapis.com/css?family=Martel' rel='stylesheet'>
+    
+
+</head>
+<body>
+
+    <div id="sidebar">
+        <div id="organization-types">
+            <h3 class="circle-sketch-highlight">Organization Type</h3>
+            <label>
+                <input type="checkbox" value="Non-profit organization" checked>
+                <span class="dot" style="background-color: #7F5A83;"></span>
+                Non-profit organization
+            </label><br>
+            <label>
+                <input type="checkbox" value="Higher education institution" checked>
+                <span class="dot" style="background-color: #E8D0A9;"></span>
+                Higher education institution
+            </label><br>
+            <label>
+                <input type="checkbox" value="Registered apprenticeship" checked>
+                <span class="dot" style="background-color: #01B3CA;"></span>
+                Registered apprenticeship
+            </label><br>
+            <label>
+                <input type="checkbox" value="WIOA-eligible" checked>
+                <span class="dot" style="background-color: #76A08A;"></span>
+                WIOA-eligible
+            </label><br>
+            <label>
+                <input type="checkbox" value="Multiple types" checked>
+                <span class="dot" style="background-color: #E06D10;"></span>
+                Multiple types
+            </label><br>
+        </div>
+
+    
+        
+        <div id="dropdown-menu"> 
+            <h3 class="circle-sketch-highlight">State-Level Insights</h3>
+            <select id="stateDropdown">
+                <option value="" disabled selected>Select a State</option>
+                <option value="Alabama">Alabama</option>
+                <option value="Alaska">Alaska</option>
+                <option value="Arizona">Arizona</option>
+                <option value="Arkansas">Arkansas</option>
+                <option value="California">California</option>
+                <option value="Colorado">Colorado</option>
+                <option value="Connecticut">Connecticut</option>
+                <option value="Delaware">Delaware</option>
+                <option value="District of Columbia">District of Columbia</option>
+                <option value="Florida">Florida</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Hawaii">Hawaii</option>
+                <option value="Idaho">Idaho</option>
+                <option value="Illinois">Illinois</option>
+                <option value="Indiana">Indiana</option>
+                <option value="Iowa">Iowa</option>
+                <option value="Kansas">Kansas</option>
+                <option value="Kentucky">Kentucky</option>
+                <option value="Louisiana">Louisiana</option>
+                <option value="Maine">Maine</option>
+                <option value="Maryland">Maryland</option>
+                <option value="Massachusetts">Massachusetts</option>
+                <option value="Michigan">Michigan</option>
+                <option value="Minnesota">Minnesota</option>
+                <option value="Mississippi">Mississippi</option>
+                <option value="Missouri">Missouri</option>
+                <option value="Montana">Montana</option>
+                <option value="Nebraska">Nebraska</option>
+                <option value="Nevada">Nevada</option>
+                <option value="New Hampshire">New Hampshire</option>
+                <option value="New Jersey">New Jersey</option>
+                <option value="New Mexico">New Mexico</option>
+                <option value="New York">New York</option>
+                <option value="North Carolina">North Carolina</option>
+                <option value="North Dakota">North Dakota</option>
+                <option value="Ohio">Ohio</option>
+                <option value="Oklahoma">Oklahoma</option>
+                <option value="Oregon">Oregon</option>
+                <option value="Pennsylvania">Pennsylvania</option>
+                <option value="Rhode Island">Rhode Island</option>
+                <option value="South Carolina">South Carolina</option>
+                <option value="South Dakota">South Dakota</option>
+                <option value="Tennessee">Tennessee</option>
+                <option value="Texas">Texas</option>
+                <option value="Utah">Utah</option>
+                <option value="Vermont">Vermont</option>
+                <option value="Virginia">Virginia</option>
+                <option value="Washington">Washington</option>
+                <option value="West Virginia">West Virginia</option>
+                <option value="Wisconsin">Wisconsin</option>
+                <option value="Wyoming">Wyoming</option>
+            </select>
+        </div>
+
+
+        <div id="state-info">
+            <!-- State information will appear here -->
+        </div>
+
+
+    </div>
+    
+
+    <div id="map"></div>
+
+    <script src="config.js"></script>
+    <script src="map.js"></script>
+
+</body>
+</html>
+
