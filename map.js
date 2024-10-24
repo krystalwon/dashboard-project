@@ -235,3 +235,11 @@ function displayStateInfo(stateName, dataset) {
     document.getElementById('state-info').innerHTML = stateInfoHtml;
 }
 
+
+
+function scrollToSection() {
+    document.getElementById('about-section').scrollIntoView({ 
+        behavior: 'smooth' 
+    });
+}
+

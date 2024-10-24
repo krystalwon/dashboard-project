@@ -118,9 +118,27 @@
     
     <div id="map"></div>
 
-
     <script src="config.js"></script>
     <script src="map.js"></script>
+
+    <div id="scroll-down-arrow" onclick="scrollToSection()">
+        CLICK FOR MORE INFO
+        <img src="images/about.png" alt="Scroll down arrow" />
+    </div>
+    
+    <!-- About section -->
+    <div id="about-section">
+        <div id="project-description">
+            <h2>About This Project</h2>
+            <p>This dashboard project, developed as part of MUSA 6110 at the University of Pennsylvania, explores workforce training providers across the United States.</p>
+            
+            <p><i>The Workforce Almanac</i>, launched by the Harvard-based Project on Workforce in 2023, collects and maps almost 17,000 providers of workforce training, which were defined as "short-term (lasting less than two years), post-high school training opportunities in which learners gain work-relevant skills to help them find a job." </p>
+
+            <p>Therefore, the training providers dataset for my project was sourced from <i>The Workforce Almanac</i>. The completed dataset lists each organization’s name, address, city, state, coordinates, and various categorizations. To build it, the team merged and cleaned data from four sources: the Department of Labor’s Registered Apprenticeship Partners Information Database System (RAPIDS) and TrainingProviderResults.gov, IRS nonprofit registrations, and the Integrated Postsecondary Education Data System (IPEDS).</p>
+                
+            <p>After downloading the raw data, I re-categorized the training providers based on my interpretation of the dataset. The refined dataset was then applied to the visualization, allowing for an interactive exploration of workforce development providers across the U.S. </p>
+        </div>
+    </div>
 
 </body>
 </html>
