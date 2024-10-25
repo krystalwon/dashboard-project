@@ -174,13 +174,13 @@ map.on('load', function () {
                 'type': 'line',
                 'source': 'stateBoundaries',
                 'paint': {
-                    'line-color': '#f5f5f5',
-                    'line-width': 2
+                    'line-color': '#F1FAEE',
+                    'line-width': 0.7
                 }
             });
 
             // Initially hide the state boundaries
-            map.setLayoutProperty('state-boundaries', 'visibility', 'none');
+            map.setLayoutProperty('state-boundaries', 'visibility');
         });
 });
 
@@ -195,14 +195,14 @@ d3.csv('data/acs_data_cleaned.csv').then(function (dataset) {
 
         // Query the selected state from the GeoJSON source
         const stateFeature = map.querySourceFeatures('stateBoundaries', {
-            filter: ['==', 'NAME', selectedState]  // Ensure this matches the property name in the GeoJSON
+            filter: ['==', 'NAME', selectedState] 
         });
 
         // Check if the state feature was found and zoom to its bounding box
         if (stateFeature.length) {
-            const stateBounds = turf.bbox(stateFeature[0]);  // Assuming you have Turf.js included
+            const stateBounds = turf.bbox(stateFeature[0]);  
             map.fitBounds(stateBounds, {
-                padding: 20
+                padding: 40
             });
         } else {
             console.error(`State ${selectedState} not found in the geojson data.`);
