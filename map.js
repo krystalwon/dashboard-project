@@ -151,16 +151,15 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
 
 
 // Load the state boundaries GeoJSON data
-const stateBoundariesUrl = 'path_to_state_boundaries_geojson'; 
+const stateBoundariesUrl = 'data/us_state_boundary.json'; 
 
 map.on('load', function () {
     // Fetch the GeoJSON and assign unique IDs to each feature
     fetch(stateBoundariesUrl)
         .then(response => response.json())
         .then(data => {
-            // Assign unique IDs to each feature for hover and click events
             data.features.forEach((feature, i) => {
-                feature.id = i;  // Assign a unique ID to each feature
+                feature.id = i;  
             });
 
             // Add the state boundaries source
