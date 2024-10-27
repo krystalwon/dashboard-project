@@ -89,6 +89,7 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
             }
             hoveredStateId = feature.id;
             map.setFeatureState({ source: 'workforceTrainingData', id: hoveredStateId }, { hover: true });
+            
 
             var coordinates = feature.geometry.coordinates.slice();
             var orgName = feature.properties.org_name;
@@ -151,7 +152,7 @@ d3.csv('data/workforce_training_cleaned.csv').then(function (data) {
 
 
 // Load the state boundaries GeoJSON data
-const stateBoundariesUrl = 'data/us_state_boundary.json'; 
+const stateBoundariesUrl = 'data/us_state_boundary.json';
 
 map.on('load', function () {
     // Fetch the GeoJSON and assign unique IDs to each feature
@@ -159,7 +160,7 @@ map.on('load', function () {
         .then(response => response.json())
         .then(data => {
             data.features.forEach((feature, i) => {
-                feature.id = i;  
+                feature.id = i;
             });
 
             // Add the state boundaries source
@@ -175,40 +176,57 @@ map.on('load', function () {
                 'source': 'stateBoundaries',
                 'paint': {
                     'line-color': '#F1FAEE',
-                    'line-width': 0.7
+                    'line-width': 0.9
                 }
             });
 
-            // Initially hide the state boundaries
+            // Add a fill layer to highlight the selected state
+            map.addLayer({
+                'id': 'highlighted-state',
+                'type': 'fill',
+                'source': 'stateBoundaries',
+                'layout': {},
+                'paint': {
+                    'fill-color': '#FFDAB9',
+                    'fill-opacity': 0.2
+                },
+                'filter': ['==', 'NAME', ''] 
+            });
+
             map.setLayoutProperty('state-boundaries', 'visibility');
         });
 });
 
 // Load the ACS data for displaying state information
 d3.csv('data/acs_data_cleaned.csv').then(function (dataset) {
-    // Add an event listener for when the user selects a state
     document.getElementById('stateDropdown').addEventListener('change', function () {
         const selectedState = this.value;
 
-        // Show state boundaries
         map.setLayoutProperty('state-boundaries', 'visibility', 'visible');
 
-        // Query the selected state from the GeoJSON source
-        const stateFeature = map.querySourceFeatures('stateBoundaries', {
-            filter: ['==', 'NAME', selectedState] 
-        });
+        map.setFilter('highlighted-state', ['==', 'NAME', selectedState]);
 
-        // Check if the state feature was found and zoom to its bounding box
-        if (stateFeature.length) {
-            const stateBounds = turf.bbox(stateFeature[0]);  
-            map.fitBounds(stateBounds, {
-                padding: 40
+        fetch(stateBoundariesUrl)
+            .then(response => response.json())
+            .then(data => {
+                const stateFeature = data.features.find(feature => feature.properties.NAME === selectedState);
+                
+                if (stateFeature) {
+                    const stateBounds = turf.bbox(stateFeature);
+                    const center = [(stateBounds[0] + stateBounds[2]) / 2, (stateBounds[1] + stateBounds[3]) / 2];
+
+                    // Pan and zoom to the selected state's center
+                    map.easeTo({
+                        center: center,
+                        zoom: 6, 
+                        duration: 1000, 
+                        padding: { top: 50, bottom: 50, left: 60, right: 50 } 
+                    });
+                } else {
+                    console.error(`State ${selectedState} not found in the geojson data.`);
+                }
             });
-        } else {
-            console.error(`State ${selectedState} not found in the geojson data.`);
-        }
 
-        // Display the state information in the sidebar
         displayStateInfo(selectedState, dataset);
     });
 });
@@ -223,18 +241,17 @@ function displayStateInfo(stateName, dataset) {
 
     const stateInfoHtml = `
         <h3 style="font-family: 'Source Code Pro', monospace;">| ${stateData.State}</h3>
+        <p>Total population <span class="state-value">${stateData['Total population']}</span></p>
+        <p>Per Capita Personal Income <span class="state-value">${stateData['Per Capita Personal Income']}</span></p>
         <p>Unemployment rate <span class="state-value">${stateData['Unemployment rate']}</span></p>
         <p>Poverty rate <span class="state-value">${stateData['Poverty rate']}</span></p>
         <p>Population identified as POC <span class="state-value">${stateData['Population identified as POC']}</span></p>
-        <p>Total population <span class="state-value">${stateData['Total population']}</span></p>
         <p>Population with less than Bachelor's degree <span class="state-value">${stateData['Population with less than Bachelor\'s degree']}</span></p>
-        <p>Per Capita Personal Income <span class="state-value">${stateData['Per Capita Personal Income']}</span></p>
+        
     `;
 
     document.getElementById('state-info').innerHTML = stateInfoHtml;
 }
-
-
 
 function scrollToSection() {
     document.getElementById('about-section').scrollIntoView({ 

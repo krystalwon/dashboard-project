@@ -20,7 +20,7 @@ body, html {
     width: 25vw; 
     max-width: 350px; 
     height: 100vh; 
-    background-color: rgba(14, 14, 14, 0.577); 
+    background-color: rgba(14, 14, 14, 0.735); 
     padding: 15px;
     color: #ECF0F1;
     font-family: 'Source Code Pro', monospace;
@@ -38,11 +38,11 @@ body, html {
     transform: translateX(-50%);
     font-size: 18px;
     font-family: 'Source Code Pro', monospace;
-    color: #ffffff;
+    color: #0c1120ee;
     cursor: pointer;
     z-index: 2;
     padding: 10px;
-    background-color: rgba(14, 14, 14, 0.7);
+    background-color: rgba(251, 248, 248, 0.7);
     border-radius: 5px;
     transition: all 0.3s ease-in-out;
 }
@@ -54,9 +54,8 @@ body, html {
 
 #about-section {
     width: 100vw;
-    height: 100vh;  
-    background-color: rgba(14, 14, 14, 0.9);  
-    color: #ECF0F1;
+    height: 100vh;   
+    color: #ecf0f1c2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,7 +79,7 @@ body, html {
 
 #project-description {
     padding: 30px;
-    background-color: rgba(14, 14, 14, 0.9); 
+    background-color: rgb(64, 62, 62); 
     color: #ECF0F1; 
     font-family: 'Source Code Pro', monospace;
     text-align: left;
